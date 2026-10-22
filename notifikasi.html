@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifikasi - JAGA E-Arsip</title>
+  
+  <!-- Font Google: Plus Jakarta Sans (sesuai typography dashboard) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 via Browser CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+  <!-- Solar Icon Set via Iconify CDN (gaya linear) -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAFAFA;
+      color: #1E293B;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Gradient khas JAGA: Crimson/Rose ke Purple/Violet */
+    .bg-jaga-gradient {
+      background: linear-gradient(90deg, #D1517A 0%, #A04EA0 45%, #5F55D6 100%);
+    }
+
+    .bg-jaga-gradient-diagonal {
+      background: linear-gradient(135deg, #E05273 0%, #A849B3 50%, #6055D7 100%);
+    }
+
+    .text-jaga-gradient {
+      background: linear-gradient(90deg, #D1517A 0%, #8C4DAA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Custom scrollbar halus */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    /* Animasi fade in lembut */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-card-in {
+      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row antialiased">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside id="sidebar" class="w-64 bg-white border-r border-slate-200/80 flex flex-col flex-shrink-0 min-h-screen transition-all duration-300 z-30">
+    <!-- Sidebar Header (Logo JAGA) -->
+    <div class="h-16 flex items-center justify-between px-5 border-b border-slate-100">
+      <div class="flex items-center gap-3">
+        <!-- Logo Squircle Gradient -->
+        <div class="w-9 h-9 rounded-xl bg-jaga-gradient-diagonal flex items-center justify-center text-white shadow-sm shadow-purple-500/20">
+          <iconify-icon icon="solar:box-minimalistic-linear" class="text-xl"></iconify-icon>
+        </div>
+        <span class="font-extrabold text-xl tracking-tight text-slate-800">JAGA</span>
+      </div>
+      <!-- Tombol Collapse Sidebar -->
+      <button id="toggle-sidebar" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors">
+        <iconify-icon icon="solar:alt-arrow-left-linear" class="text-base"></iconify-icon>
+      </button>
+    </div>
+
+    <!-- Sidebar Navigation Links -->
+    <nav class="flex-1 overflow-y-auto px-3.5 py-4 space-y-6">
+      
+      <!-- GRUP 1: MENU UTAMA -->
+      <div>
+        <p class="px-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">MENU UTAMA</p>
+        <ul class="space-y-1">
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <iconify-icon icon="solar:widget-2-linear" class="text-lg text-slate-500"></iconify-icon>
+              <span>Beranda</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <div class="flex items-center gap-3">
+                <iconify-icon icon="solar:box-linear" class="text-lg text-slate-500"></iconify-icon>
+                <span>Arsip Baru</span>
+              </div>
+              <iconify-icon icon="solar:add-circle-linear" class="text-slate-400 text-sm"></iconify-icon>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <iconify-icon icon="solar:folder-linear" class="text-lg text-slate-500"></iconify-icon>
+              <span>Repositori</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <iconify-icon icon="solar:archive-down-minimaze-linear" class="text-lg text-slate-500"></iconify-icon>
+              <span>Penyusutan</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <iconify-icon icon="solar:chart-2-linear" class="text-lg text-slate-500"></iconify-icon>
+              <span>Laporan</span>
+            </a>
+          </li>
+          <!-- Menu Notifikasi: Item Aktif dengan Gradient Merah-Ungu -->
+          <li>
+            <a href="notifikasi.html" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-jaga-gradient text-white shadow-md shadow-purple-500/20 text-xs font-semibold transition-all">
+              <div class="flex items-center gap-3">
+                <iconify-icon icon="solar:bell-linear" class="text-lg"></iconify-icon>
+                <span>Notifikasi</span>
+              </div>
+              <span id="sidebar-unread-badge" class="bg-white/25 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">0</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <div class="flex items-center gap-3">
+                <iconify-icon icon="solar:user-hand-up-linear" class="text-lg text-slate-500"></iconify-icon>
+                <span>Aksesibilitas Arsip</span>
+              </div>
+              <iconify-icon icon="solar:alt-arrow-right-linear" class="text-slate-400 text-xs"></iconify-icon>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- GRUP 2: DATA MASTER -->
+      <div>
+        <p class="px-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">DATA MASTER</p>
+        <ul class="space-y-1">
+          <li>
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <div class="flex items-center gap-3">
+                <iconify-icon icon="solar:slider-vertical-linear" class="text-lg text-slate-500"></iconify-icon>
+                <span>Referensi</span>
+              </div>
+              <iconify-icon icon="solar:alt-arrow-right-linear" class="text-slate-400 text-xs"></iconify-icon>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <div class="flex items-center gap-3">
+                <iconify-icon icon="solar:users-group-two-rounded-linear" class="text-lg text-slate-500"></iconify-icon>
+                <span>Manajemen Pengguna</span>
+              </div>
+              <iconify-icon icon="solar:alt-arrow-right-linear" class="text-slate-400 text-xs"></iconify-icon>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <iconify-icon icon="solar:paperclip-linear" class="text-lg text-slate-500"></iconify-icon>
+              <span>Berita Acara</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- GRUP 3: AUDIT & SISTEM -->
+      <div>
+        <p class="px-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase mb-2">AUDIT & SISTEM</p>
+        <ul class="space-y-1">
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <iconify-icon icon="solar:code-linear" class="text-lg text-slate-500"></iconify-icon>
+              <span>App Log</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-xs font-semibold">
+              <iconify-icon icon="solar:monitor-linear" class="text-lg text-slate-500"></iconify-icon>
+              <span>Monitoring</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </nav>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT WRAPPER ==================== -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+
+    <!-- ==================== HEADER (SAMA PERSIS DENGAN SCREENSHOT) ==================== -->
+    <header class="h-16 bg-white border-b border-slate-200/80 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+      
+      <!-- Sisi Kiri: Search Bar -->
+      <div class="flex items-center gap-4 flex-1 max-w-xl">
+        <div class="relative w-full max-w-md">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+            <iconify-icon icon="solar:magnifer-linear" class="text-base"></iconify-icon>
+          </span>
+          <input 
+            type="text" 
+            id="search-input"
+            placeholder="Cari arsip, dokumen, klasifikasi, menu..." 
+            class="w-full bg-[#F1F5F9] text-xs sm:text-sm text-slate-700 placeholder-slate-400 rounded-full pl-9 pr-4 py-2 border-none focus:outline-none focus:ring-2 focus:ring-purple-300 focus:bg-white transition-all shadow-2xs"
+          >
+        </div>
+      </div>
+
+      <!-- Sisi Kanan: Theme/Bell Icon + Profile Super Admin -->
+      <div class="flex items-center gap-5">
+        <!-- Icon Lonceng Header dengan Badge Titik Realtime -->
+        <a href="notifikasi.html" class="relative p-2 text-slate-500 hover:text-purple-600 hover:bg-slate-100 rounded-full transition-colors" title="Lihat Notifikasi">
+          <iconify-icon icon="solar:bell-linear" class="text-xl"></iconify-icon>
+          <span id="header-unread-badge" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
+        </a>
+
+        <!-- Profil Super Admin -->
+        <div class="flex items-center gap-3 pl-2 border-l border-slate-200">
+          <div class="relative">
+            <!-- Avatar SA Gradient -->
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#9D4EA3] to-[#D1517A] text-white font-bold text-xs flex items-center justify-center shadow-xs">
+              SA
+            </div>
+            <!-- Online status green dot -->
+            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+          </div>
+          <div class="hidden sm:block text-left">
+            <div class="text-xs font-bold text-slate-800 leading-tight">Super</div>
+            <div class="text-[10px] text-slate-400 font-medium leading-tight">Super Admin</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ==================== BODY CONTENT AREA ==================== -->
+    <main class="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+      
+      <!-- Top Bar: Judul Halaman & Pill Jam Digital Realtime -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-[26px] font-bold text-slate-800 tracking-tight flex items-center gap-2">
+            Notifikasi
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Pantau seluruh aktivitas persetujuan, peminjaman, pengembalian, dan masa retensi arsip.
+          </p>
+        </div>
+
+        <!-- Pill Jam & Tanggal Kanan Atas (Sama Persis Format Screenshot) -->
+        <div class="inline-flex items-center gap-2 bg-white border border-slate-200/90 rounded-full px-4 py-1.5 shadow-2xs self-start sm:self-auto text-xs text-slate-600 font-medium">
+          <iconify-icon icon="solar:clock-circle-linear" class="text-slate-400 text-sm"></iconify-icon>
+          <span id="header-date">Kamis, 22 Oktober 2026</span>
+          <span class="text-slate-300">·</span>
+          <span id="header-clock" class="font-bold text-slate-800">10.04.41 WIB</span>
+        </div>
+      </div>
+
+      <!-- Ringkasan Mini Bar (KPI Notifikasi) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+            <iconify-icon icon="solar:bell-linear" class="text-xl"></iconify-icon>
+          </div>
+          <div>
+            <div class="text-[11px] font-medium text-slate-400">Total Notifikasi</div>
+            <div id="stat-total" class="text-lg font-bold text-slate-800">0</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center">
+            <iconify-icon icon="solar:danger-triangle-linear" class="text-xl"></iconify-icon>
+          </div>
+          <div>
+            <div class="text-[11px] font-medium text-slate-400">Belum Dibaca</div>
+            <div id="stat-unread" class="text-lg font-bold text-rose-600">0</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <iconify-icon icon="solar:archive-linear" class="text-xl"></iconify-icon>
+          </div>
+          <div>
+            <div class="text-[11px] font-medium text-slate-400">Layanan Peminjaman</div>
+            <div id="stat-peminjaman" class="text-lg font-bold text-slate-800">0</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+            <iconify-icon icon="solar:refresh-linear" class="text-xl"></iconify-icon>
+          </div>
+          <div>
+            <div class="text-[11px] font-medium text-slate-400">Retensi & Sistem</div>
+            <div id="stat-system" class="text-lg font-bold text-slate-800">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Tabs & Tombol Aksi Massal -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-2">
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full" id="filter-tabs">
+          <button data-filter="all" class="tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap bg-jaga-gradient text-white shadow-xs">
+            Semua (<span id="count-all">0</span>)
+          </button>
+          <button data-filter="unread" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 bg-white border border-slate-200/80 transition-all whitespace-nowrap">
+            Belum Dibaca (<span id="count-unread">0</span>)
+          </button>
+          <button data-filter="peminjaman" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 bg-white border border-slate-200/80 transition-all whitespace-nowrap">
+            Peminjaman
+          </button>
+          <button data-filter="pengembalian" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 bg-white border border-slate-200/80 transition-all whitespace-nowrap">
+            Pengembalian
+          </button>
+          <button data-filter="persetujuan" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 bg-white border border-slate-200/80 transition-all whitespace-nowrap">
+            Persetujuan
+          </button>
+          <button data-filter="retensi" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 bg-white border border-slate-200/80 transition-all whitespace-nowrap">
+            Retensi
+          </button>
+          <button data-filter="sistem" class="tab-btn px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 bg-white border border-slate-200/80 transition-all whitespace-nowrap">
+            Sistem
+          </button>
+        </div>
+
+        <!-- Tombol Aksi Massal -->
+        <div class="flex items-center gap-2 self-start lg:self-auto flex-shrink-0">
+          <button 
+            id="btn-mark-all" 
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-purple-50 text-slate-700 hover:text-purple-700 border border-slate-200/80 rounded-xl text-xs font-semibold shadow-2xs transition-all active:scale-95"
+          >
+            <iconify-icon icon="solar:check-read-linear" class="text-base text-purple-600"></iconify-icon>
+            <span>Tandai Semua Dibaca</span>
+          </button>
+          <button 
+            id="btn-delete-all" 
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 border border-slate-200/80 rounded-xl text-xs font-semibold shadow-2xs transition-all active:scale-95"
+          >
+            <iconify-icon icon="solar:trash-bin-trash-linear" class="text-base text-rose-500"></iconify-icon>
+            <span>Hapus Semua</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==================== DAFTAR KARTU NOTIFIKASI ==================== -->
+      <div id="notifications-container" class="space-y-3">
+        <!-- Notifikasi di-render oleh Vanilla JS -->
+      </div>
+
+      <!-- ==================== EMPTY STATE ==================== -->
+      <div id="empty-state" class="hidden bg-white rounded-3xl border border-slate-200/80 p-12 text-center max-w-lg mx-auto shadow-2xs my-8">
+        <div class="w-16 h-16 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-4 border border-purple-100/80 shadow-inner">
+          <iconify-icon icon="solar:bell-off-linear" class="text-3xl"></iconify-icon>
+        </div>
+        <h3 class="text-base font-bold text-slate-800">Tidak Ada Notifikasi</h3>
+        <p id="empty-state-desc" class="text-xs text-slate-500 mt-1 max-w-xs mx-auto leading-relaxed">
+          Semua notifikasi telah dibaca atau tidak ada pemberitahuan pada kategori ini.
+        </p>
+        <button 
+          id="btn-reset-filter" 
+          class="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all"
+        >
+          <iconify-icon icon="solar:refresh-linear" class="text-sm"></iconify-icon>
+          <span>Tampilkan Semua</span>
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==================== MODAL KONFIRMASI HAPUS SEMUA ==================== -->
+  <div id="modal-delete" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+    <div class="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl border border-slate-100 transform scale-95 transition-transform duration-200" id="modal-box">
+      <!-- Icon Modal Danger -->
+      <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4 border border-rose-100 shadow-inner">
+        <iconify-icon icon="solar:trash-bin-trash-linear" class="text-3xl"></iconify-icon>
+      </div>
+
+      <div class="text-center">
+        <h3 class="text-lg font-bold text-slate-800">Hapus Semua Notifikasi?</h3>
+        <p class="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
+          Semua pemberitahuan pada daftar ini akan dihapus dari memori. Tindakan ini hanya bertahan selama sesi saat ini (refresh halaman untuk mengembalikan data awal).
+        </p>
+      </div>
+
+      <div class="flex items-center justify-center gap-3 mt-6">
+        <button 
+          id="btn-cancel-modal" 
+          class="w-full py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold transition-all"
+        >
+          Batal
+        </button>
+        <button 
+          id="btn-confirm-delete-all" 
+          class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white text-xs font-semibold shadow-md shadow-rose-500/20 transition-all"
+        >
+          Ya, Hapus Semua
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFIKASI SUKSES ==================== -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900/90 text-white backdrop-blur-md px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 translate-y-16 opacity-0 transition-all duration-300 pointer-events-none text-xs font-medium border border-slate-700/50">
+    <iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 text-lg flex-shrink-0"></iconify-icon>
+    <span id="toast-message">Pesan notifikasi</span>
+  </div>
+
+  <!-- ==================== VANILLA JAVASCRIPT ==================== -->
+  <script>
+    /**
+     * DUMMY DATA NOTIFIKASI APLIKASI E-ARSIP "JAGA"
+     * Konstan array 15 notifikasi realistis konteks pengelolaan arsip digital & fisik.
+     * Dapat dipindahkan ke notifications.json di kemudian hari.
+     */
+    const NOTIFICATIONS = [
+      {
+        id: 1,
+        category: 'peminjaman',
+        title: 'Permintaan Pinjam Berkas: Keuangan TA 2024',
+        message: 'Divisi Akuntansi mengajukan peminjaman berkas Laporan Pertanggungjawaban Keuangan TA 2024 (No. Berkas: KEU/2024/0891). Menunggu verifikasi petugas.',
+        createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 menit lalu
+        isRead: false
+      },
+      {
+        id: 2,
+        category: 'persetujuan',
+        title: 'Peminjaman Arsip Proyek Disetujui',
+        message: 'Kepala Bagian Tata Usaha menyetujui peminjaman Arsip Proyek Pembangunan Gedung C (No. Berkas: INFRA/2023/014). Batas waktu kembali: 29 Oktober 2026.',
+        createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(), // 25 menit lalu
+        isRead: false
+      },
+      {
+        id: 3,
+        category: 'retensi',
+        title: 'Peringatan Retensi: 42 Berkas Memasuki Masa Inaktif',
+        message: 'Sesuai Jadwal Retensi Arsip (JRA), 42 berkas rekam medis kepegawaian tahun 2021 telah mencapai akhir retensi aktif dan siap dialihkan ke Depo Inaktif.',
+        createdAt: new Date(Date.now() - 55 * 60 * 1000).toISOString(), // 55 menit lalu
+        isRead: false
+      },
+      {
+        id: 4,
+        category: 'pengembalian',
+        title: 'Konfirmasi Pengembalian Berkas Diterima',
+        message: 'Petugas Depo Kearsipan telah menerima fisik Berkas Perjanjian Kerja Sama Vendor (No. PKS/2025/112). Kondisi lengkap dan status arsip kini Tersedia.',
+        createdAt: new Date(Date.now() - 120 * 60 * 1000).toISOString(), // 2 jam lalu
+        isRead: false
+      },
+      {
+        id: 5,
+        category: 'persetujuan',
+        title: 'Pengajuan Akses Dokumen Rahasia Ditolak',
+        message: 'Pengajuan hak akses Arsip Audit Investigasi Internal (No: AUD/RAH/2025) ditolak oleh Administrator karena belum dilengkapi Surat Tugas Direksi.',
+        createdAt: new Date(Date.now() - 210 * 60 * 1000).toISOString(), // 3.5 jam lalu
+        isRead: false
+      },
+      {
+        id: 6,
+        category: 'pengembalian',
+        title: 'Peringatan Jatuh Tempo Pengembalian',
+        message: 'Peminjaman Berkas Sertifikat Aset Lahan Kantor Cabang Surabaya (No: AST/2022/045) jatuh tempo hari ini pukul 16.00 WIB. Segera lakukan serah terima.',
+        createdAt: new Date(Date.now() - 360 * 60 * 1000).toISOString(), // 6 jam lalu
+        isRead: false
+      },
+      {
+        id: 7,
+        category: 'sistem',
+        title: 'Aktivitas Login Baru Terdeteksi',
+        message: 'Akun Super Admin berhasil masuk melalui peramban Chrome Linux pada alamat IP 192.168.1.104. Jika bukan aktivitas Anda, amankan akun segera.',
+        createdAt: new Date(Date.now() - 480 * 60 * 1000).toISOString(), // 8 jam lalu
+        isRead: true
+      },
+      {
+        id: 8,
+        category: 'retensi',
+        title: 'Peringatan Pemusnahan: 332 Berkas Siap Dinilai',
+        message: 'Daftar 332 berkas arsip fasilitatif yang telah melewati batas retensi inaktif telah disusun dalam daftar nominatif usulan pemusnahan tahun 2026.',
+        createdAt: new Date(Date.now() - 840 * 60 * 1000).toISOString(), // 14 jam lalu
+        isRead: true
+      },
+      {
+        id: 9,
+        category: 'peminjaman',
+        title: 'Permintaan Pinjam Arsip Kepegawaian',
+        message: 'Biro SDM mengajukan peminjaman fisik Berkas SK Pengangkatan Pegawai Fungsional NIP 19850210 untuk verifikasi berkas kenaikan jenjang karir.',
+        createdAt: new Date(Date.now() - 1440 * 60 * 1000).toISOString(), // 1 hari lalu
+        isRead: true
+      },
+      {
+        id: 10,
+        category: 'sistem',
+        title: 'Pencadangan Basis Data Otomatis Berhasil',
+        message: 'Backup berkala basis data e-arsip JAGA versi 3.2 selesai dieksekusi pukul 03.00 WIB. Integritas hash SHA-256 valid (Ukuran data: 4.8 GB).',
+        createdAt: new Date(Date.now() - 1800 * 60 * 1000).toISOString(), // 1.25 hari lalu
+        isRead: true
+      },
+      {
+        id: 11,
+        category: 'persetujuan',
+        title: 'Berita Acara Digital Menunggu Tanda Tangan',
+        message: 'Draft Berita Acara Alih Media Digital No: BA-DIG/2026/X/012 memerlukan tanda tangan elektronik tersertifikasi (BSrE) dari Super Admin.',
+        createdAt: new Date(Date.now() - 2500 * 60 * 1000).toISOString(), // 1.7 hari lalu
+        isRead: true
+      },
+      {
+        id: 12,
+        category: 'pengembalian',
+        title: 'Keterlambatan Pengembalian Berkas Kontrak',
+        message: 'Peminjaman Berkas Kontrak Pengadaan IT 2025 (No: IT/KTR/2025/089) telah melewati batas waktu pengembalian 3 hari. Pengingat otomatis dikirim ke peminjam.',
+        createdAt: new Date(Date.now() - 3200 * 60 * 1000).toISOString(), // 2.2 hari lalu
+        isRead: true
+      },
+      {
+        id: 13,
+        category: 'peminjaman',
+        title: 'Akses Salinan Digital Dibuka',
+        message: 'Akses unduh salinan digital dokumen SK Penetapan Zonasi Gedung C telah dibuka untuk Pemohon: Satpol PP dengan masa berlaku token 48 jam.',
+        createdAt: new Date(Date.now() - 4300 * 60 * 1000).toISOString(), // 3 hari lalu
+        isRead: true
+      },
+      {
+        id: 14,
+        category: 'retensi',
+        title: 'Penyerahan Arsip Statis ke ANRI / Lembaga Kearsipan',
+        message: '12 Berkas Arsip Bersejarah Kota era 1975-1980 telah selesai diverifikasi untuk proses akuisisi penyerahan arsip statis ke kearsipan daerah.',
+        createdAt: new Date(Date.now() - 5760 * 60 * 1000).toISOString(), // 4 hari lalu
+        isRead: true
+      },
+      {
+        id: 15,
+        category: 'sistem',
+        title: 'Pembaruan Enkripsi Repositori Arsip (AES-256)',
+        message: 'Modul keamanan sistem berhasil mengaktifkan enkripsi berkas tingkat lanjut AES-256 GCM untuk seluruh dokumen berkategori Sangat Rahasia.',
+        createdAt: new Date(Date.now() - 7200 * 60 * 1000).toISOString(), // 5 hari lalu
+        isRead: true
+      }
+    ];
+
+    /**
+     * STATE MANAGEMENT (In-memory, TIDAK pakai localStorage)
+     * Data kembali ke kondisi awal saat halaman di-refresh.
+     */
+    let notificationsState = JSON.parse(JSON.stringify(NOTIFICATIONS));
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    /**
+     * Metadata & Konfigurasi Visual Kategori (Warna, Icon Solar, Badge)
+     */
+    const CATEGORY_CONFIG = {
+      peminjaman: {
+        label: 'Peminjaman',
+        icon: 'solar:box-minimalistic-linear',
+        bgColor: 'bg-amber-50',
+        textColor: 'text-amber-600',
+        borderColor: 'border-amber-200/70',
+        badgeBg: 'bg-amber-100 text-amber-800'
+      },
+      pengembalian: {
+        label: 'Pengembalian',
+        icon: 'solar:refresh-linear',
+        bgColor: 'bg-emerald-50',
+        textColor: 'text-emerald-600',
+        borderColor: 'border-emerald-200/70',
+        badgeBg: 'bg-emerald-100 text-emerald-800'
+      },
+      persetujuan: {
+        label: 'Persetujuan',
+        icon: 'solar:check-square-linear',
+        bgColor: 'bg-purple-50',
+        textColor: 'text-purple-600',
+        borderColor: 'border-purple-200/70',
+        badgeBg: 'bg-purple-100 text-purple-800'
+      },
+      retensi: {
+        label: 'Retensi',
+        icon: 'solar:danger-triangle-linear',
+        bgColor: 'bg-rose-50',
+        textColor: 'text-rose-600',
+        borderColor: 'border-rose-200/70',
+        badgeBg: 'bg-rose-100 text-rose-800'
+      },
+      sistem: {
+        label: 'Sistem',
+        icon: 'solar:server-square-linear',
+        bgColor: 'bg-sky-50',
+        textColor: 'text-sky-600',
+        borderColor: 'border-sky-200/70',
+        badgeBg: 'bg-sky-100 text-sky-800'
+      }
+    };
+
+    /**
+     * Helper Format Waktu Relatif dalam Bahasa Indonesia
+     */
+    function formatRelativeTime(isoString) {
+      const now = new Date();
+      const date = new Date(isoString);
+      const diffMs = now - date;
+      const diffSeconds = Math.floor(diffMs / 1000);
+      const diffMinutes = Math.floor(diffSeconds / 60);
+      const diffHours = Math.floor(diffMinutes / 60);
+      const diffDays = Math.floor(diffHours / 24);
+
+      if (diffMinutes < 1) return 'Baru saja';
+      if (diffMinutes < 60) return `${diffMinutes} menit lalu`;
+      if (diffHours < 24) return `${diffHours} jam lalu`;
+      if (diffDays === 1) return 'Kemarin';
+      if (diffDays < 7) return `${diffDays} hari lalu`;
+      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    /**
+     * Update Live Clock & Indonesian Date pada Header Kanan Atas
+     */
+    function updateClock() {
+      const now = new Date();
+      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      
+      const dayName = days[now.getDay()];
+      const day = now.getDate();
+      const monthName = months[now.getMonth()];
+      const year = now.getFullYear();
+
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      const dateEl = document.getElementById('header-date');
+      const clockEl = document.getElementById('header-clock');
+
+      if (dateEl) dateEl.textContent = `${dayName}, ${day} ${monthName} ${year}`;
+      if (clockEl) clockEl.textContent = `${hours}.${minutes}.${seconds} WIB`;
+    }
+
+    // Jalankan clock setiap detik
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /**
+     * Tampilkan Toast Pemberitahuan Sederhana
+     */
+    let toastTimeout;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      toastMessage.textContent = message;
+
+      clearTimeout(toastTimeout);
+      toast.classList.remove('translate-y-16', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-16', 'opacity-0', 'pointer-events-none');
+      }, 2600);
+    }
+
+    /**
+     * Update Badge Indikator dan Mini KPI
+     */
+    function updateBadgesAndStats() {
+      const totalCount = notificationsState.length;
+      const unreadCount = notificationsState.filter(n => !n.isRead).length;
+      const peminjamanCount = notificationsState.filter(n => n.category === 'peminjaman' || n.category === 'pengembalian').length;
+      const systemCount = notificationsState.filter(n => n.category === 'retensi' || n.category === 'sistem').length;
+
+      // Sidebar badge
+      const sidebarBadge = document.getElementById('sidebar-unread-badge');
+      if (sidebarBadge) {
+        sidebarBadge.textContent = unreadCount;
+        sidebarBadge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+      }
+
+      // Header bell red dot
+      const headerDot = document.getElementById('header-unread-badge');
+      if (headerDot) {
+        headerDot.style.display = unreadCount > 0 ? 'block' : 'none';
+      }
+
+      // Filter tabs counter
+      const countAll = document.getElementById('count-all');
+      const countUnread = document.getElementById('count-unread');
+      if (countAll) countAll.textContent = totalCount;
+      if (countUnread) countUnread.textContent = unreadCount;
+
+      // KPI Mini Cards
+      const statTotal = document.getElementById('stat-total');
+      const statUnread = document.getElementById('stat-unread');
+      const statPeminjaman = document.getElementById('stat-peminjaman');
+      const statSystem = document.getElementById('stat-system');
+      if (statTotal) statTotal.textContent = totalCount;
+      if (statUnread) statUnread.textContent = unreadCount;
+      if (statPeminjaman) statPeminjaman.textContent = peminjamanCount;
+      if (statSystem) statSystem.textContent = systemCount;
+    }
+
+    /**
+     * Render Daftar Notifikasi Berdasarkan Filter dan Pencarian
+     */
+    function renderNotifications() {
+      const container = document.getElementById('notifications-container');
+      const emptyState = document.getElementById('empty-state');
+      const emptyDesc = document.getElementById('empty-state-desc');
+
+      // Filter data
+      let filtered = notificationsState.filter(item => {
+        // Tab Filter
+        if (currentFilter === 'unread' && item.isRead) return false;
+        if (currentFilter !== 'all' && currentFilter !== 'unread' && item.category !== currentFilter) return false;
+
+        // Search Filter
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          const matchTitle = item.title.toLowerCase().includes(q);
+          const matchMsg = item.message.toLowerCase().includes(q);
+          const matchCat = item.category.toLowerCase().includes(q);
+          if (!matchTitle && !matchMsg && !matchCat) return false;
+        }
+        return true;
+      });
+
+      // Update badge counts & stats
+      updateBadgesAndStats();
+
+      // Handle Empty State
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        if (searchQuery.trim() !== '') {
+          emptyDesc.textContent = `Tidak ditemukan notifikasi dengan kata kunci "${searchQuery}".`;
+        } else if (currentFilter === 'unread') {
+          emptyDesc.textContent = 'Hebat! Semua notifikasi telah selesai dibaca.';
+        } else {
+          emptyDesc.textContent = 'Tidak ada notifikasi dalam filter atau kategori ini.';
+        }
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      // Render items
+      container.innerHTML = filtered.map(item => {
+        const config = CATEGORY_CONFIG[item.category] || CATEGORY_CONFIG.sistem;
+        const relativeTime = formatRelativeTime(item.createdAt);
+
+        // Styling read vs unread
+        const cardBg = item.isRead 
+          ? 'bg-white/80 opacity-75 hover:opacity-100 border-slate-200/60' 
+          : 'bg-white border-slate-200/90 shadow-2xs hover:shadow-md hover:border-purple-200 ring-1 ring-purple-500/5';
+        
+        const titleWeight = item.isRead 
+          ? 'font-medium text-slate-700' 
+          : 'font-bold text-slate-900';
+
+        return `
+          <div 
+            class="notification-item animate-card-in ${cardBg} rounded-2xl border p-4 sm:p-5 flex items-start gap-4 transition-all duration-200 cursor-pointer group"
+            data-id="${item.id}"
+          >
+            <!-- Squircle Icon Kategori -->
+            <div class="w-11 h-11 rounded-xl ${config.bgColor} ${config.textColor} border ${config.borderColor} flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-105 shadow-2xs">
+              <iconify-icon icon="${config.icon}" class="text-xl"></iconify-icon>
+            </div>
+
+            <!-- Konten Notifikasi -->
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <!-- Badge Kategori -->
+                <span class="inline-block text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md ${config.badgeBg}">
+                  ${config.label}
+                </span>
+                <span class="text-slate-300 text-xs">·</span>
+                <!-- Waktu Relatif -->
+                <span class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-400">
+                  <iconify-icon icon="solar:clock-circle-linear" class="text-xs"></iconify-icon>
+                  ${relativeTime}
+                </span>
+              </div>
+
+              <!-- Judul Notifikasi -->
+              <h3 class="text-xs sm:text-sm ${titleWeight} group-hover:text-purple-700 transition-colors">
+                ${item.title}
+              </h3>
+
+              <!-- Deskripsi Notifikasi -->
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed line-clamp-2 sm:line-clamp-none">
+                ${item.message}
+              </p>
+            </div>
+
+            <!-- Sisi Kanan: Titik Unread & Tombol Aksi Hapus -->
+            <div class="flex flex-col items-end justify-between self-stretch gap-2 flex-shrink-0">
+              <div class="h-4 flex items-center">
+                ${!item.isRead ? `
+                  <span class="w-2.5 h-2.5 rounded-full bg-purple-600 ring-4 ring-purple-100 flex-shrink-0 animate-pulse" title="Belum dibaca"></span>
+                ` : ''}
+              </div>
+
+              <!-- Tombol Hapus per Item -->
+              <button 
+                class="btn-delete-item p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                data-id="${item.id}"
+                title="Hapus notifikasi ini"
+              >
+                <iconify-icon icon="solar:trash-bin-trash-linear" class="text-base pointer-events-none"></iconify-icon>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Event listener: Klik pada kartu = Tandai Sudah Dibaca
+      document.querySelectorAll('.notification-item').forEach(card => {
+        card.addEventListener('click', (e) => {
+          // Cegah trigger jika tombol hapus yang diklik
+          if (e.target.closest('.btn-delete-item')) return;
+
+          const id = parseInt(card.getAttribute('data-id'));
+          const target = notificationsState.find(n => n.id === id);
+          if (target && !target.isRead) {
+            target.isRead = true;
+            renderNotifications();
+            showToast('Notifikasi ditandai sebagai sudah dibaca');
+          }
+        });
+      });
+
+      // Event listener: Klik icon trash = Hapus per item
+      document.querySelectorAll('.btn-delete-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = parseInt(btn.getAttribute('data-id'));
+          notificationsState = notificationsState.filter(n => n.id !== id);
+          renderNotifications();
+          showToast('Notifikasi berhasil dihapus');
+        });
+      });
+    }
+
+    /**
+     * FILTER TABS INTERACTION
+     */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Reset styling semua tab
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.className = 'tab-btn px-4 py-1.5 rounded-full text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 bg-white border border-slate-200/80 transition-all whitespace-nowrap';
+        });
+
+        // Set active tab styling (JAGA Gradient)
+        btn.className = 'tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap bg-jaga-gradient text-white shadow-xs';
+
+        currentFilter = btn.getAttribute('data-filter');
+        renderNotifications();
+      });
+    });
+
+    // Reset filter dari tombol empty state
+    document.getElementById('btn-reset-filter').addEventListener('click', () => {
+      currentFilter = 'all';
+      searchQuery = '';
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) searchInput.value = '';
+      
+      const firstTab = document.querySelector('.tab-btn[data-filter="all"]');
+      if (firstTab) firstTab.click();
+    });
+
+    /**
+     * PENCARIAN REALTIME (SEARCH BAR HEADER)
+     */
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderNotifications();
+      });
+    }
+
+    /**
+     * AKSI: TANDAI SEMUA SUDAH DIBACA
+     */
+    document.getElementById('btn-mark-all').addEventListener('click', () => {
+      const hasUnread = notificationsState.some(n => !n.isRead);
+      if (!hasUnread) {
+        showToast('Semua notifikasi sudah dibaca sebelumnya');
+        return;
+      }
+
+      notificationsState.forEach(n => { n.isRead = true; });
+      renderNotifications();
+      showToast('Seluruh notifikasi berhasil ditandai telah dibaca');
+    });
+
+    /**
+     * AKSI: MODAL KONFIRMASI HAPUS SEMUA
+     */
+    const modalDelete = document.getElementById('modal-delete');
+    const modalBox = document.getElementById('modal-box');
+    const btnDeleteAll = document.getElementById('btn-delete-all');
+    const btnCancelModal = document.getElementById('btn-cancel-modal');
+    const btnConfirmDeleteAll = document.getElementById('btn-confirm-delete-all');
+
+    function openModal() {
+      if (notificationsState.length === 0) {
+        showToast('Daftar notifikasi sudah kosong');
+        return;
+      }
+      modalDelete.classList.remove('opacity-0', 'pointer-events-none');
+      modalDelete.classList.add('opacity-100');
+      modalBox.classList.remove('scale-95');
+      modalBox.classList.add('scale-100');
+    }
+
+    function closeModal() {
+      modalDelete.classList.remove('opacity-100');
+      modalDelete.classList.add('opacity-0', 'pointer-events-none');
+      modalBox.classList.remove('scale-100');
+      modalBox.classList.add('scale-95');
+    }
+
+    btnDeleteAll.addEventListener('click', openModal);
+    btnCancelModal.addEventListener('click', closeModal);
+    modalDelete.addEventListener('click', (e) => {
+      if (e.target === modalDelete) closeModal();
+    });
+
+    btnConfirmDeleteAll.addEventListener('click', () => {
+      notificationsState = [];
+      closeModal();
+      renderNotifications();
+      showToast('Semua notifikasi telah dihapus');
+    });
+
+    /**
+     * COLLAPSE / EXPAND SIDEBAR (RESPONSIF MOBILE / DESKTOP)
+     */
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggle-sidebar');
+    let isCollapsed = false;
+
+    if (toggleSidebar && sidebar) {
+      toggleSidebar.addEventListener('click', () => {
+        isCollapsed = !isCollapsed;
+        if (isCollapsed) {
+          sidebar.classList.add('-ml-64');
+        } else {
+          sidebar.classList.remove('-ml-64');
+        }
+      });
+    }
+
+    // Inisialisasi awal saat halaman dimuat
+    renderNotifications();
+  </script>
+</body>
+</html>
+
